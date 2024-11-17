@@ -1,7 +1,8 @@
 from datetime import datetime
-
 import requests
 
 r = requests.get('https://api.ipify.org')
-# print(r.text)
-print(datetime.now().strftime("%d.%m.%Y %H:%M:%S"), r.text)
+date = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+
+with open("iplog.txt", "w") as f:
+    f.write(f"{date} {r.text}\n")
