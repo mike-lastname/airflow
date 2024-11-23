@@ -16,8 +16,7 @@ def ip_check():
         with open("/home/bind/ip_log.txt", "a") as f:
             f.write(f"{date}: {r}\n")
 
-    ip = get_ip()
-    write_in_file(ip)
+    write_in_file(get_ip())
 
 
 ip_check()
