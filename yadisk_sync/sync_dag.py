@@ -3,7 +3,7 @@ import yadisk
 import os
 from datetime import datetime as dt
 
-client = yadisk.Client(token="y0_AgAAAAANVHGWAAzRIwAAAAEZWNAsAAA1OYXo9-lM9bMiP3XgkrDjEIxzEw")
+client = yadisk.Client(token="")
 
 
 @dag(schedule="@hourly", start_date=dt(2024, 11, 23), catchup=False)
