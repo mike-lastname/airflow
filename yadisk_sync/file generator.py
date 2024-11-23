@@ -2,7 +2,7 @@ import requests
 import random_file_generator
 
 
-TOKEN = 'y0_AgAAAAANVHGWAAzRIwAAAAEZWNAsAAA1OYXo9-lM9bMiP3XgkrDjEIxzEw'
+TOKEN = ''
 headers = {'Authorization': f'OAuth {TOKEN}'}
 
 filename = random_file_generator.generate_random_text(5)
