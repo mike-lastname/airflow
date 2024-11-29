@@ -7,7 +7,6 @@ import os
 from datetime import datetime as dt
 import pathlib
 
-# ts = "{{ ts }}"
 
 with DAG(
         dag_id="yadisk_sync_dag",
