@@ -51,7 +51,7 @@ with DAG(
     )
 
     def logger(ti):
-        d = ti.xcom_pull(task_ids="generate_upload_task")
+        d = ti.xcom_pull(task_ids="generate_upload")
         log_folder = "/home/bind/yadisk_sync_v2/logs"
         with open(f"{log_folder}/{d['dir_name']}.txt", "a") as f:
             for i in d["log"]:
