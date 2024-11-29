@@ -47,11 +47,14 @@ with DAG(
     generate_upload = PythonOperator(
         task_id="generate_upload",
         execution_timeout=timedelta(seconds=100),
-        python_callable=generator_uploader
+        python_callable=generator_uploader,
+        op_kwargs={
+            "dag_run_time": "{{ts}}"
+        }
     )
 
     def logger(ti):
-        d = ti.xcom_pull(task_ids="generate_upload_task")
+        d = ti.xcom_pull(task_ids="generate_upload")
         log_folder = "/home/bind/yadisk_sync_v2/logs"
         with open(f"{log_folder}/{d['dir_name']}.txt", "a") as f:
             for i in d["log"]:
