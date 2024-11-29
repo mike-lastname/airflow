@@ -33,7 +33,6 @@ with DAG(
 
     get_local_folders_task = PythonOperator(
         task_id="get_local_folders_task",
-        # execution_timeout=timedelta(seconds=100),
         python_callable=get_local_folders
     )
 
