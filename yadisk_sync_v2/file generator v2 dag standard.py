@@ -47,7 +47,10 @@ with DAG(
     generate_upload = PythonOperator(
         task_id="generate_upload",
         execution_timeout=timedelta(seconds=100),
-        python_callable=generator_uploader
+        python_callable=generator_uploader,
+        op_kwargs={
+            "dag_run_time": "{{ts}}"
+        }
     )
 
     def logger(ti):
