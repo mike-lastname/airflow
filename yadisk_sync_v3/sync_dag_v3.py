@@ -47,7 +47,7 @@ with DAG(
         start_date=dt(2024, 11, 27),
         schedule="*/5 * * * *",
         catchup=False,
-        params={"hard_sync": "true"}
+        params={"hard_sync": "{{ params.hard_sync }}"}
 ):
     download_files_task = PythonOperator(
         task_id="download_files_task",
