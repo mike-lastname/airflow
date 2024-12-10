@@ -7,12 +7,6 @@ import io
 import pendulum
 
 
-# token = Variable.get("token")
-# client = yadisk.Client(token=token)
-# local_folder = Variable.get("local_folder")
-# disk_folder = Variable.get("disk_folder")
-
-
 def random_string_generator(length):
     chars = string.ascii_letters + string.digits
     return ''.join(random.choice(chars) for _ in range(length))
@@ -29,23 +23,6 @@ def generator():
         res_dict["filename"] = filename
         res_dict["data"] = data
         yield res_dict
-
-
-# def get_local_folders(local_folder):
-#     return set(os.listdir(local_folder))
-#
-#
-# def get_disk_folders(client, disk_folder):
-#     with client:
-#         dirs = [i["name"] for i in list(client.listdir(disk_folder, fields=["name"]))]
-#     return set(dirs)
-
-
-# def check_file(path, local_folder):
-#     fname = pathlib.Path(f'{local_folder}/{path.split("/")[2]}/{path.split("/")[3]}')
-#     if fname.exists():
-#         return fname.stat().st_mtime
-#     return float(0)
 
 
 def get_files_to_dl(client, prev_start_date):
@@ -94,15 +71,6 @@ def delete_all(local_folder):
     os.system(f"rm -rf {local_folder}/*")
 
 
-# def download_files_all(client, local_folder, disk_folder):
-#     folders_to_dl = list(get_disk_folders(client, disk_folder) - get_local_folders(local_folder))
-#     for i in folders_to_dl:
-#         pathlib.Path(f"{local_folder}/{i}").mkdir()
-#     for i in client.get_files():
-#         if i['path'].split('/')[2] in folders_to_dl:
-#             client.download(i["path"], f"{local_folder}/{i['path'].split('/')[2]}/{i['path'].split('/')[3]}")
-
-
 def download_files(client, local_folder, disk_folder, prev_start_date, logger, hard_sync: bool):
     if hard_sync is True:
         logger.info(f"Hard_sync is ON! Deleting all files in '{local_folder}' "
@@ -123,12 +91,6 @@ def download_files_util(client, local_folder, files_to_dl):
         else:
             pathlib.Path(f"{local_folder}/{i.split('/')[2]}").mkdir()
             client.download(f"{i}", f"{local_folder}/{i.split('/')[2]}/{i.split('/')[3]}")
-
-
-# def download_files_all(client, local_folder, files_to_dl):
-#     for i in files_to_dl:
-#         pathlib.Path(f"{local_folder}/{i.split('/')[2]}").mkdir()
-#         client.download(f"{i}", f"{local_folder}/{i.split('/')[2]}/{i.split('/')[3]}")
 
 
 def size_convert(size_in_bytes):

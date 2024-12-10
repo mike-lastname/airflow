@@ -40,14 +40,5 @@ with DAG(
         }
     )
 
-    # update_files_task = PythonOperator(
-    #     task_id="update_files_task",
-    #     python_callable=update_files,
-    #     op_kwargs={
-    #         "ts": "{{ ts }}",
-    #         "client": client,
-    #         "local_folder": local_folder
-    #     }
-    # )
 
     download_files_task
