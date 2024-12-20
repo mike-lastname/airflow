@@ -78,10 +78,6 @@ def download_files(client: yadisk.Client, local_folder: str, disk_folder: str, p
     else:
         logger.info(f"Hard_sync is OFF! Downloading new and edited files from 'disk:/{disk_folder}'")
     files_to_dl = get_files_to_dl(client, prev_start_date, hard_sync)
-    download_files_util(client, local_folder, files_to_dl)
-
-
-def download_files_util(client: yadisk.Client, local_folder: str, files_to_dl: list):
     for i in files_to_dl:
         if pathlib.Path(local_folder, pathlib.Path(i).parent.name).is_dir() is False:
             pathlib.Path(local_folder, pathlib.Path(i).parent.name).mkdir()
