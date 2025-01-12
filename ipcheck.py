@@ -1,6 +1,5 @@
 from airflow.decorators import dag, task
 from datetime import datetime as dt
-import requests
 from playwright.sync_api import sync_playwright
 
 @dag(schedule="@hourly", start_date=dt(2024, 11, 19), catchup=False)
@@ -11,7 +10,6 @@ def ip_check():
             browser = p.chromium.launch()
             page = browser.new_page()
             page.goto('https://myip.ru')
-            # container = page.get_by_role('row').all()
             container = page.locator('//table/tbody/tr').nth(1).inner_text()
         return container
 
