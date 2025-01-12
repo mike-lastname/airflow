@@ -25,14 +25,14 @@ def generator():
         yield res_dict
 
 
-def get_files_to_dl(client: yadisk.Client, prev_start_date: pendulum.DateTime, hard_sync: bool):
+def get_files_to_dl(client: yadisk.Client, prev_start_date: pendulum.DateTime, hard_sync: bool, disk_folder):
     with client:
         if prev_start_date is None or hard_sync:
-            return [i["path"] for i in client.get_files(fields="path")]
+            return [i["path"] for i in client.get_files(fields="path") if disk_folder in i["path"]]
         else:
             files_to_dl = []
             for i in client.get_files(fields=["modified", "path"]):
-                if (i["modified"]) > prev_start_date:
+                if (i["modified"]) > prev_start_date and disk_folder in i["path"]:
                     files_to_dl.append(i["path"])
             return files_to_dl
 
@@ -73,11 +73,11 @@ def delete_all(local_folder: str):
 def download_files(client: yadisk.Client, local_folder: str, disk_folder: str, prev_start_date: pendulum.DateTime, logger, hard_sync: bool):
     if hard_sync is True:
         logger.info(f"Hard_sync is ON! Deleting all files in '{local_folder}' "
-                    f"and downloading all files from 'disk:/{disk_folder}'")
+                    f"and downloading all files from {disk_folder}'")
         delete_all(local_folder)
     else:
-        logger.info(f"Hard_sync is OFF! Downloading new and edited files from 'disk:/{disk_folder}'")
-    files_to_dl = get_files_to_dl(client, prev_start_date, hard_sync)
+        logger.info(f"Hard_sync is OFF! Downloading new and edited files from {disk_folder}'")
+    files_to_dl = get_files_to_dl(client, prev_start_date, hard_sync, disk_folder)
     for i in files_to_dl:
         if pathlib.Path(local_folder, pathlib.Path(i).parent.name).is_dir() is False:
             pathlib.Path(local_folder, pathlib.Path(i).parent.name).mkdir()
