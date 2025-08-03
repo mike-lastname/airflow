@@ -7,14 +7,17 @@ from funcs.utils import uploader, random_edit
 import logging
 
 
+# Получение параметров из переменных Airflow
 token = Variable.get("token")
 disk_folder = Variable.get("disk_folder")
 tz = Variable.get("timezone")
 
 
+# Настройка логгера для вывода сообщений в лог Airflow
 logger = logging.getLogger("airflow.task")
 
 
+# Инициализация клиента Яндекс.Диска с токеном
 client = yadisk.Client(token=token)
 
 
@@ -24,6 +27,7 @@ with DAG(
         schedule="0 * * * *",
         catchup=False,
 ):
+    # Задача загрузки файла на Яндекс.Диск
     upload = PythonOperator(
         task_id="upload",
         python_callable=uploader,
@@ -36,6 +40,7 @@ with DAG(
         }
     )
 
+    # Задача случайного редактирования файла на Яндекс.Диске
     edit = PythonOperator(
         task_id="edit",
         python_callable=random_edit,
@@ -44,4 +49,5 @@ with DAG(
         }
     )
 
+    # Установка порядка задач
     upload >> edit
