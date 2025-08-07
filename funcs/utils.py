@@ -7,11 +7,13 @@ import pendulum
 import yadisk
 
 
+# Генератор строки из случайных символов (прописные и строчные латинские буквы, цифры)
 def random_string_generator(length: int):
     chars = string.ascii_letters + string.digits
     return ''.join(random.choice(chars) for _ in range(length))
 
 
+# Генератор случайных файлов
 def generator():
     file_cnt = random.randint(1, 50)
     res_dict = dict()
@@ -25,7 +27,14 @@ def generator():
         yield res_dict
 
 
-def get_files_to_dl(client: yadisk.Client, prev_start_date: pendulum.DateTime, hard_sync: bool, disk_folder):
+# Возвращает список файлов для загрузки в локальную папку
+# Сравнивается время изменения файла и время предыдущего запуска sync_dag
+def get_files_to_dl(
+        client: yadisk.Client,
+        prev_start_date: pendulum.DateTime,
+        hard_sync: bool,
+        disk_folder
+):
     with client:
         if prev_start_date is None or hard_sync:
             return [i["path"] for i in client.get_files(fields="path") if disk_folder in i["path"]]
@@ -37,7 +46,15 @@ def get_files_to_dl(client: yadisk.Client, prev_start_date: pendulum.DateTime, h
             return files_to_dl
 
 
-def uploader(task_run_time: str, tz: str, client: yadisk.Client, disk_folder: str, logger):
+# Загружает сгенерированные файлы в папку на Яндекс.Диск
+def uploader(
+        task_run_time: str,
+        tz: str,
+        client: yadisk.Client,
+        disk_folder: str,
+        logger
+):
+    # Определяем название папки по времени запуска задачи
     local_tz = pendulum.timezone(tz)
     directory_name = local_tz.convert(pendulum.parse(task_run_time)).strftime("%Y%m%d_%H%M%S")
     n_files = 0
@@ -52,6 +69,9 @@ def uploader(task_run_time: str, tz: str, client: yadisk.Client, disk_folder: st
     logger.info(f"Files uploaded: {n_files}")
     logger.info(disk_space_info(client))
 
+
+# Изменение случайных файлов на Яндекс.Диске
+# В конец изменяемых файлов добавляется строка "random string"
 def random_edit(client: yadisk.Client):
     with client:
         all_files = [i["path"] for i in client.get_files(fields="path")]
@@ -66,11 +86,20 @@ def random_edit(client: yadisk.Client):
             client.upload(dl, i, overwrite=True)
 
 
+# Удаляет все файлы в локальной папке
 def delete_all(local_folder: str):
     os.system(f"rm -rf {local_folder}/*")
 
 
-def download_files(client: yadisk.Client, local_folder: str, disk_folder: str, prev_start_date: pendulum.DateTime, logger, hard_sync: bool):
+# Загружает файлы с Яндекс.Диска в локальную папку
+def download_files(
+        client: yadisk.Client,
+        local_folder: str,
+        disk_folder: str,
+        prev_start_date: pendulum.DateTime,
+        logger,
+        hard_sync: bool
+):
     if hard_sync is True:
         logger.info(f"Hard_sync is ON! Deleting all files in '{local_folder}' "
                     f"and downloading all files from {disk_folder}'")
@@ -84,6 +113,7 @@ def download_files(client: yadisk.Client, local_folder: str, disk_folder: str, p
         client.download(f"{i}", f"{pathlib.Path(local_folder, pathlib.Path(i).parent.name, pathlib.Path(i).name)}", overwrite=True)
 
 
+# Конвертер из байтов в кбайты, мбайты, гбайты
 def size_convert(size_in_bytes: int):
     sizes = {"KB": 1024, "MB": 1024 * 1024, "GB": 1024 * 1024 * 1024}
     for k, v in sizes.items():
@@ -91,6 +121,8 @@ def size_convert(size_in_bytes: int):
             return str(f"{round(size_in_bytes / v, 3)} {k}")
 
 
+
+# Считает занятое и свободное место на Яндекс.Диске.
 def disk_space_info(client: yadisk.Client):
     with client:
         disk_info = client.get_disk_info(fields=["total_space", "used_space"])
